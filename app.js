@@ -1,12 +1,17 @@
 const express = require('express');
 const path = require('path');
+const { connectDB } = require('./src/db');
+const dotenv = require('dotenv');
 
 //create instance of express app
 const app = express();
 const port = 3000;
 
-app.listen(port, ()=> {
-    console.log('Hello, Foxes!');
+connectDB();
+dotenv.config();
+
+app.listen(process.env.PORT, () => {
+    console.log(`Server now running on PORT ${process.env.PORT}`)
 });
 
 //set up templating engine/view engine
