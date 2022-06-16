@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const { connectDB } = require('./src/db');
 const dotenv = require('dotenv');
+const { graphqlHTTP } = require('express-graphql');
+const schema = require('./src/graphql/schema');
 
 //create instance of express app
 const app = express();
@@ -22,6 +24,11 @@ app.use((req, res, next)=>{
     console.log(`Request received at: ${Date()}`);
     next();
 });
+
+app.use("/graphql", graphqlHTTP({
+    schema,
+    graphiql: true
+}));
 
 //routes
 app.get('/', (req, res)=> {
