@@ -1,5 +1,5 @@
 const { GraphQLString, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLInt } = require('graphql')
-const { QuestionInputType, AnswerInputType } = require('./types')
+const { UserType, PostType } = require('./types')
 const { User, Post } = require('../models')
 const { createJwtToken } = require('../util/auth')
 
@@ -48,12 +48,12 @@ const createPost = {
     type: GraphQLString,
     args: {
         questions: { 
-            type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(PostInputType)))
+            type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(PostType)))
         },
         title: {
             type: GraphQLString
         },
-        description: {
+        body: {
             type: GraphQLString
         },
         userId: {
@@ -70,7 +70,7 @@ const createPost = {
             let slugId = Math.floor(Math.random()*10000)
             fullSlug = `${slugify}-${slugId}`
 
-            const existingPost = await Quiz.findOne({slug: fullSlug})
+            const existingPost = await Post.findOne({slug: fullSlug})
             
             if (!existingPost)
                 break;
@@ -79,7 +79,7 @@ const createPost = {
         const post = new Post({
             title: args.title,
             slug: fullSlug,
-            description: args.description,
+            body: args.bpdy,
             userId: args.userId
         })
 
@@ -88,9 +88,6 @@ const createPost = {
         return post.slug
     }
 };
-
-
-       
 
 
 module.exports = { register, login, createPost}
