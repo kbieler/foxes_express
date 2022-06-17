@@ -4,6 +4,8 @@ const { connectDB } = require('./src/db');
 const dotenv = require('dotenv');
 const { graphqlHTTP } = require('express-graphql');
 const schema = require('./src/graphql/schema');
+const { authenticate } = require('./src/middleware/auth');
+const cookieParser = require('cookie-parser')
 
 //create instance of express app
 const app = express();
@@ -17,7 +19,9 @@ app.set('view engine', 'ejs');
 
 app.set('views', path.join(__dirname, '/src/views/pages'));
 
-require("./src/routes")(app)
+app.use(authenticate);
+
+require("./src/routes")(app);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server now running on PORT ${process.env.PORT}`)
@@ -26,6 +30,8 @@ app.listen(process.env.PORT, () => {
 
 
 // middleware
+app.use(cookieParser());
+
 app.use((req, res, next)=>{
     console.log(`Request received at: ${Date()}`);
     next();
@@ -35,6 +41,8 @@ app.use("/graphql", graphqlHTTP({
     schema,
     graphiql: true
 }));
+
+app.use(express.urlencoded({ extended: true }));
 
 //routes
 app.get('/', (req, res)=> {
